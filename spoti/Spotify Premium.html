@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spotify Premium</title>
+  <style>
+    :root {
+      --spotify-black: #000000;
+      --spotify-dark: #121212;
+      --spotify-card: #181818;
+      --spotify-green: #1db954;
+      --spotify-green-hover: #1ed760;
+      --spotify-gray: #b3b3b3;
+      --spotify-white: #ffffff;
+    }
+    
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Circular Std', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: var(--spotify-black);
+      color: var(--spotify-white);
+      line-height: 1.4;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Header / Hero */
+    .hero {
+      background: linear-gradient(135deg, #ff6b9d 0%, #c471ed 25%, #f64f59 50%, #c471ed 75%, #ff6b9d 100%);
+      background-size: 200% 200%;
+      animation: gradientShift 8s ease infinite;
+      position: relative;
+      min-height: 100vh;
+    }
+    
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.15);
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 20px;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+    }
+    
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: .2px;
+    }
+    
+    .brand svg {
+      width: 32px;
+      height: 32px;
+    }
+    
+    .nav {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    
+    .nav a {
+      color: var(--spotify-white);
+      text-decoration: none;
+      opacity: .9;
+      font-weight: 600;
+      font-size: 14px;
+      transition: opacity 0.2s;
+    }
+    
+    .nav a:hover { opacity: 1; }
+    
+    .nav .btn-nav {
+      background: var(--spotify-white);
+      color: var(--spotify-black);
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-weight: 700;
+    }
+    
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 40px;
+      align-items: center;
+      padding: 48px 0;
+      min-height: 80vh;
+    }
+    
+    .h1 {
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 1.05;
+      margin: 0 0 16px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+    
+    .p-lg {
+      font-size: clamp(16px, 2.2vw, 20px);
+      opacity: .95;
+      margin: 0 0 28px;
+      font-weight: 400;
+    }
+    
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 0 0 16px;
+    }
+    
+    .btn {
+      border: 0;
+      border-radius: 9999px;
+      padding: 16px 32px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      transform: translateY(0);
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,.3);
+    }
+    
+    .btn-primary {
+      background: var(--spotify-green);
+      color: var(--spotify-black);
+    }
+    
+    .btn-primary:hover {
+      background: var(--spotify-green-hover);
+    }
+    
+    .btn-ghost {
+      background: rgba(0,0,0,.4);
+      border: 1px solid rgba(255,255,255,.3);
+      color: var(--spotify-white);
+      backdrop-filter: blur(10px);
+    }
+    
+    .btn-ghost:hover {
+      background: rgba(0,0,0,.6);
+      border-color: rgba(255,255,255,.5);
+    }
+    
+    .disclaimer {
+      font-size: 12px;
+      opacity: .8;
+      max-width: 620px;
+      line-height: 1.5;
+    }
+    
+    .disclaimer a {
+      color: var(--spotify-white);
+      text-decoration: underline;
+    }
+    
+    .album-wall {
+      transform: rotate(8deg) scale(0.95);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: rotate(8deg) scale(0.95) translateY(0); }
+      50% { transform: rotate(8deg) scale(0.95) translateY(-10px); }
+    }
+    
+    .album {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,.4);
+      transition: transform 0.3s ease;
+    }
+    
+    .album:hover {
+      transform: scale(1.05);
+      z-index: 10;
+    }
+    
+    .album img {
+      width: 100%;
+      height: 120px;
+      display: block;
+      object-fit: cover;
+    }
+
+    /* Sección "Nota la diferencia" */
+    .note {
+      background: linear-gradient(180deg, transparent 0%, rgba(255,255,255,.05) 100%);
+      text-align: center;
+      padding: 80px 20px;
+    }
+    
+    .note h2 {
+      font-size: clamp(28px, 4vw, 48px);
+      margin: 0 0 12px;
+      font-weight: 900;
+    }
+    
+    .note p {
+      opacity: .9;
+      margin: 0 auto;
+      max-width: 720px;
+      font-size: 18px;
+      color: var(--spotify-gray);
+    }
+
+    /* Tabla de beneficios */
+    .compare {
+      background: var(--spotify-black);
+      padding: 60px 20px;
+    }
+    
+    .compare-wrap {
+      max-width: 1000px;
+      margin: 0 auto;
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--spotify-card);
+      border: 1px solid rgba(255,255,255,.1);
+    }
+    
+    .compare-head, .compare-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+    }
+    
+    .compare-head {
+      background: rgba(255,255,255,.05);
+      font-weight: 800;
+      font-size: 14px;
+    }
+    
+    .cell {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      display: flex;
+      align-items: center;
+    }
+    
+    .cell + .cell {
+      border-left: 1px solid rgba(255,255,255,.05);
+      justify-content: center;
+    }
+    
+    .center { text-align: center; }
+    
+    .check {
+      color: var(--spotify-green);
+      font-size: 20px;
+      font-weight: bold;
+    }
+    
+    .dash { color: var(--spotify-gray); font-size: 18px; }
+
+    /* Sección planes */
+    .plans {
+      background: var(--spotify-black);
+      padding: 80px 20px;
+    }
+    
+    .plans h2 {
+      font-size: clamp(28px, 4vw, 44px);
+      text-align: center;
+      margin: 0 0 12px;
+      font-weight: 900;
+    }
+    
+    .plans p.lead {
+      opacity: .9;
+      text-align: center;
+      max-width: 820px;
+      margin: 0 auto 32px;
+      color: var(--spotify-gray);
+      font-size: 16px;
+    }
+    
+    .pay-icons {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin: 24px 0 56px;
+      flex-wrap: wrap;
+    }
+    
+    .pay-icons img {
+      height: 28px;
+      display: block;
+      opacity: .8;
+      transition: opacity 0.2s;
+    }
+    
+    .pay-icons img:hover { opacity: 1; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      align-items: stretch;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Tarjeta plan */
+    .card-plan {
+      position: relative;
+      background: var(--spotify-card);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+      padding: 24px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      min-height: 420px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card-plan:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0,0,0,.4);
+    }
+    
+    .card-plan.individual { border-color: #f8bbd9; }
+    .card-plan.student { border-color: #c4b5fd; }
+    .card-plan.duo { border-color: #fbbf24; }
+    .card-plan.family { border-color: #7dd3fc; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+    
+    .pill {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--spotify-green);
+    }
+    
+    .price {
+      color: var(--spotify-gray);
+      font-size: 14px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .title {
+      font-size: 32px;
+      font-weight: 900;
+      margin: 0 0 8px;
+    }
+    
+    .subtitle {
+      margin: 0 0 20px;
+      opacity: .9;
+      color: var(--spotify-gray);
+      font-size: 15px;
+    }
+    
+    .features {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 24px;
+      flex: 1 1 auto;
+    }
+    
+    .features li {
+      margin: 12px 0;
+      padding-left: 24px;
+      position: relative;
+      font-size: 15px;
+    }
+    
+    .features li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--spotify-green);
+      font-weight: bold;
+    }
+    
+    .cta {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .cta .btn { width: 100%; }
+    
+    .btn-light-pink { background: #f8bbd9; color: #000; }
+    .btn-light-pink:hover { background: #f4a6d1; }
+    
+    .btn-lavender { background: #c4b5fd; color: #000; }
+    .btn-lavender:hover { background: #a78bfa; }
+    
+    .btn-duo { background: #fbbf24; color: #000; }
+    .btn-duo:hover { background: #f59e0b; }
+    
+    .btn-family { background: #7dd3fc; color: #000; }
+    .btn-family:hover { background: #38bdf8; }
+    
+    .secondary {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.3);
+      color: var(--spotify-white);
+    }
+    
+    .secondary:hover {
+      border-color: rgba(255,255,255,.6);
+      background: rgba(255,255,255,.05);
+    }
+    
+    .terms {
+      color: var(--spotify-gray);
+      font-size: 11px;
+      line-height: 1.4;
+      margin: 0;
+    }
+    
+    .terms a { color: var(--spotify-white); }
+
+    /* Footer */
+    footer {
+      background: var(--spotify-black);
+      border-top: 1px solid #282828;
+      padding: 60px 20px 40px;
+    }
+    
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
+    }
+    
+    .footer-col h4 {
+      color: var(--spotify-white);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 0 0 20px;
+    }
+    
+    .footer-col a {
+      display: block;
+      color: var(--spotify-gray);
+      text-decoration: none;
+      margin: 12px 0;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+    
+    .footer-col a:hover { color: var(--spotify-green); }
+    
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 40px auto 0;
+      padding-top: 40px;
+      border-top: 1px solid #282828;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    
+    .social-links {
+      display: flex;
+      gap: 16px;
+    }
+    
+    .social-links a {
+      width: 40px;
+      height: 40px;
+      background: #292929;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--spotify-white);
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    
+    .social-links a:hover { background: #3e3e3e; }
+    
+    .copyright {
+      color: var(--spotify-gray);
+      font-size: 12px;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+      .album-wall { transform: rotate(4deg) scale(0.9); margin: 0 auto; max-width: 400px; }
+      .btn-row { justify-content: center; }
+      .disclaimer { margin: 0 auto; }
+    }
+    
+    @media (max-width: 640px) {
+      .nav { display: none; }
+      .album-wall { grid-template-columns: repeat(2, 1fr); transform: rotate(2deg) scale(0.9); }
+      .grid { grid-template-columns: 1fr; }
+      .card-plan { min-height: auto; }
+      .compare-head, .compare-row { grid-template-columns: 1.5fr 1fr 1fr; font-size: 13px; }
+      .cell { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <header class="header">
+        <div class="brand">
+          <svg viewBox="0 0 168 168" fill="none">
+            <path fill="#1db954" d="M83.996.277C37.747.277.253 37.77.253 84.019c0 46.251 37.494 83.741 83.743 83.741 46.254 0 83.744-37.49 83.744-83.741 0-46.246-37.49-83.74-83.745-83.74l.001-.002zm38.404 120.78a5.217 5.217 0 01-7.18 1.69c-19.662-12.01-44.414-14.73-73.564-8.07a5.222 5.222 0 01-6.249-3.93 5.213 5.213 0 013.926-6.25c31.9-7.291 59.263-4.15 81.913 9.34a5.195 5.195 0 011.654 7.22zm10.25-22.805a6.54 6.54 0 01-9.01 2.21c-22.517-13.858-56.82-17.88-83.446-9.76a6.538 6.538 0 01-8.14-4.36 6.545 6.545 0 014.354-8.144c30.418-9.264 68.132-4.758 94.04 11.238a6.54 6.54 0 012.202 8.815zm.88-23.744c-27.06-16.08-71.71-17.558-97.575-9.704a7.834 7.834 0 11-4.495-15.016c29.52-8.95 78.755-7.252 109.005 10.8a7.833 7.833 0 01-6.935 13.92z"/>
+          </svg>
+          Spotify
+        </div>
+        <nav class="nav">
+          <a href="#planes">Premium</a>
+          <a href="#ayuda">Ayuda</a>
+          <a href="#descargar">Descargar</a>
+          <a href="Inicia sesión - Spotify.html" class="btn-nav">Iniciar sesión</a>
+        </nav>
+      </header>
+
+      <div class="hero-grid">
+        <div>
+          <h1 class="h1">Escucha sin límites. Prueba 3 meses de Premium Individual gratis.</h1>
+          <p class="p-lg">Después, solo cuesta $139.00 al mes. Cancela cuando quieras.</p>
+          <div class="btn-row">
+            <a class="btn btn-primary" href="Inicia sesión - Spotify.html">Empezar</a>
+            <a class="btn btn-ghost" href="#planes">Ver todos los planes</a>
+          </div>
+          <p class="disclaimer">
+            Gratis por 3 meses. Después, cuesta $139.00 al mes. La oferta solo está disponible si aún no probaste Premium. 
+            <a href="#">Se aplican Términos</a>.
+          </p>
+        </div>
+
+        <div class="album-wall">
+          <div class="album"><img src="Spotify Premium_files/photo-1505740420928-5e560c06d30e" alt="Álbum"></div>
+          <div class="album"><img src="Spotify Premium_files/photo-1511379938547-c1f69419868d" alt="Álbum"></div>
+          <div class="album"><img src="Spotify Premium_files/photo-1511671782779-c97d3d27a1d4" alt="Álbum"></div>
+          <div class="album"><img src="Spotify Premium_files/photo-1520975916090-3105956dac38" alt="Álbum"></div>
+          <div class="album"><img src="Spotify Premium_files/photo-1470225620780-dba8ba36b745" alt="Álbum"></div>
+          <div class="album"><img src="Spotify Premium_files/photo-1517245386807-bb43f82c33c4" alt="Álbum"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Nota la diferencia -->
+  <section class="note">
+    <div class="container">
+      <h2>Nota la diferencia</h2>
+      <p>Cámbiate a Premium y disfruta del control total de tu música. Sin anuncios, sin interrupciones, solo tu música.</p>
+    </div>
+  </section>
+
+  <!-- Comparativa -->
+  <section class="compare" id="beneficios">
+    <div class="compare-wrap">
+      <div class="compare-head">
+        <div class="cell">Beneficios</div>
+        <div class="cell center">Plan gratuito</div>
+        <div class="cell center">Premium</div>
+      </div>
+
+      <div class="compare-row">
+        <div class="cell">Escucha música sin anuncios</div>
+        <div class="cell center"><span class="dash">—</span></div>
+        <div class="cell center"><span class="check">✓</span></div>
+      </div>
+      <div class="compare-row">
+        <div class="cell">Descarga y escucha en modo offline</div>
+        <div class="cell center"><span class="dash">—</span></div>
+        <div class="cell center"><span class="check">✓</span></div>
+      </div>
+      <div class="compare-row">
+        <div class="cell">Reproduce canciones en el orden que quieras</div>
+        <div class="cell center"><span class="dash">—</span></div>
+        <div class="cell center"><span class="check">✓</span></div>
+      </div>
+      <div class="compare-row">
+        <div class="cell">Sonido de alta calidad</div>
+        <div class="cell center"><span class="dash">—</span></div>
+        <div class="cell center"><span class="check">✓</span></div>
+      </div>
+      <div class="compare-row">
+        <div class="cell">Escucha con amigos en tiempo real</div>
+        <div class="cell center"><span class="dash">—</span></div>
+        <div class="cell center"><span class="check">✓</span></div>
+      </div>
+      <div class="compare-row">
+        <div class="cell">Organiza la fila de reproducción</div>
+        <div class="cell center"><span class="dash">—</span></div>
+        <div class="cell center"><span class="check">✓</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Planes -->
+  <section class="plans" id="planes">
+    <div class="container">
+      <h2>Planes accesibles para cada situación</h2>
+      <p class="lead">Elige un plan Premium y escucha música sin anuncios y sin límites. Cancela cuando quieras.</p>
+
+      <div class="pay-icons">
+        <img src="Compra - Spotify Premium_files/Visa_Inc._logo_(2021–present).svg" alt="Visa">
+        <img src="Compra - Spotify Premium_files/Mastercard-logo.svg" alt="Mastercard">
+        <img src="Compra - Spotify Premium_files/American_Express_logo_(2018).svg" alt="American Express">
+        <img src="Compra - Spotify Premium_files/PayPal.svg" alt="PayPal">
+      </div>
+
+      <div class="grid">
+        <!-- Individual -->
+        <article class="card-plan individual">
+          <div class="badge"><span class="pill"></span>Premium</div>
+          <div class="price">3 meses gratis</div>
+          <h3 class="title">Individual</h3>
+          <p class="subtitle">1 cuenta Premium</p>
+          <ul class="features">
+            <li>Escucha sin anuncios</li>
+            <li>Modo offline</li>
+            <li>Cancela cuando quieras</li>
+          </ul>
+          <div class="cta">
+            <a class="btn btn-light-pink" href="Inicia sesión - Spotify.html">Probar 3 meses gratis</a>
+            <button class="btn secondary" type="button">Pago único</button>
+            <p class="terms">
+              Gratis por 3 meses. Luego $139.00/mes. 
+              <a href="#">Términos aplican</a>.
+            </p>
+          </div>
+        </article>
+
+        <!-- Estudiantes -->
+        <article class="card-plan student">
+          <div class="badge"><span class="pill"></span>Premium</div>
+          <div class="price">$0 por 3 meses</div>
+          <h3 class="title">Estudiantes</h3>
+          <p class="subtitle">1 cuenta Premium verificada</p>
+          <ul class="features">
+            <li>Descuento especial para estudiantes</li>
+            <li>Hulu (con anuncios) incluido</li>
+            <li>Cancela cuando quieras</li>
+          </ul>
+          <div class="cta">
+            <a class="btn btn-lavender" href="Inicia sesión - Spotify.html">Probar 3 meses gratis</a>
+            <p class="terms">
+              $0 por 3 meses. Luego $74.00/mes. 
+              <a href="#">Términos aplican</a>.
+            </p>
+          </div>
+        </article>
+
+        <!-- Dúo -->
+        <article class="card-plan duo">
+          <div class="badge"><span class="pill"></span>Dúo</div>
+          <div class="price">$189.00/mes</div>
+          <h3 class="title">Dúo</h3>
+          <p class="subtitle">2 cuentas Premium</p>
+          <ul class="features">
+            <li>2 cuentas Premium para parejas</li>
+            <li>Duo Mix: playlists para dos</li>
+            <li>Cancela cuando quieras</li>
+          </ul>
+          <div class="cta">
+            <a class="btn btn-duo" href="Inicia sesión - Spotify.html">Obtener Premium Dúo</a>
+            <button class="btn secondary" type="button">Pago único</button>
+            <p class="terms">
+              Para parejas que viven juntas. 
+              <a href="#">Términos aplican</a>.
+            </p>
+          </div>
+        </article>
+
+        <!-- Familiar -->
+        <article class="card-plan family">
+          <div class="badge"><span class="pill"></span>Premium</div>
+          <div class="price">$199.00/mes</div>
+          <h3 class="title">Familiar</h3>
+          <p class="subtitle">Hasta 6 cuentas Premium</p>
+          <ul class="features">
+            <li>6 cuentas Premium para familia</li>
+            <li>Bloquea contenido explícito</li>
+            <li>Spotify Kids incluido</li>
+            <li>Cancela cuando quieras</li>
+          </ul>
+          <div class="cta">
+            <a class="btn btn-family" href="Inicia sesión - Spotify.html">Obtener Premium Familiar</a>
+            <button class="btn secondary" type="button">Pago único</button>
+            <p class="terms">
+              Para familiares que viven juntas. 
+              <a href="#">Términos aplican</a>.
+            </p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-col">
+        <h4>Empresa</h4>
+        <a href="#">Acerca de</a>
+        <a href="#">Empleo</a>
+        <a href="#">For the Record</a>
+      </div>
+      <div class="footer-col">
+        <h4>Comunidades</h4>
+        <a href="#">Para artistas</a>
+        <a href="#">Desarrolladores</a>
+        <a href="#">Publicidad</a>
+        <a href="#">Inversionistas</a>
+        <a href="#">Proveedores</a>
+      </div>
+      <div class="footer-col">
+        <h4>Enlaces útiles</h4>
+        <a href="#">Ayuda</a>
+        <a href="#">App gratis</a>
+      </div>
+      <div class="footer-col">
+        <h4>Redes</h4>
+        <div class="social-links">
+          <a href="#">IG</a>
+          <a href="#">TW</a>
+          <a href="#">FB</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="copyright">© 2026 Spotify AB</p>
+      <div style="display:flex;gap:24px;">
+        <a href="#" style="color:#b3b3b3;font-size:12px;text-decoration:none;">Privacidad</a>
+        <a href="#" style="color:#b3b3b3;font-size:12px;text-decoration:none;">Términos</a>
+        <a href="#" style="color:#b3b3b3;font-size:12px;text-decoration:none;">Cookies</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
